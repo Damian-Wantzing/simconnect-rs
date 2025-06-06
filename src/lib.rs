@@ -16,13 +16,10 @@ mod tests {
     #[test]
     fn test_simconnect_open() {
         unsafe {
-            // VERY IMPORTANT: we need to pass a pointer to a mutable pointer
-            // so not just a null pointer itself since SimConnect will reassign what it is pointing
-            // to
-            let handle = &mut std::ptr::null_mut();
+            let mut handle: HANDLE = std::ptr::null_mut();
 
             let result = SimConnect_Open(
-                handle,
+                &mut handle,
                 CString::new("Test Application").unwrap().as_ptr(),
                 std::ptr::null_mut(),
                 0,
@@ -31,7 +28,7 @@ mod tests {
             );
             assert!(!handle.is_null());
 
-            SimConnect_Close(*handle);
+            SimConnect_Close(handle);
 
             assert!(result >= 0);
         }
